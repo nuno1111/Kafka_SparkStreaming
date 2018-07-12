@@ -11,7 +11,9 @@ import java.util.Date
 object SystemLogConsumerStreaming {
   def main(args: Array[String]): Unit = {
 
-    val conf = new SparkConf().setMaster("local[2]").setAppName("SystemLogConsumerStreaming")
+    val conf = new SparkConf()
+      .setMaster("local[*]")
+      .setAppName("SystemLogConsumerStreaming")
 
     val ssc = new StreamingContext(conf, Seconds(1))
 
@@ -30,8 +32,6 @@ object SystemLogConsumerStreaming {
       PreferConsistent,
       Subscribe[String, String](topics, kafkaParams)
     )
-
-
 
     val format = new java.text.SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS")
     val today = new java.text.SimpleDateFormat("yyyy-MM-dd")
@@ -52,7 +52,7 @@ object SystemLogConsumerStreaming {
 //          println("==============================================================================================")
         }
 
-        rdd.map(_.value).saveAsTextFile("/home/devuser/data/systemlog-"+format.format(date))
+        rdd.map(_.value).saveAsTextFile("/home/devuser/data/"+today.format(date)+"/systemlog-"+format.format(date))
 
 
 
